@@ -47,10 +47,40 @@ def init_db(db_path = None):
     connection.execute("""
         CREATE INDEX IF NOT EXISTS idx_bot_id ON traffic_logs(bot_id)
     """)
-    
+
     connection.execute("""
         CREATE INDEX IF NOT EXISTS idx_timestamp ON traffic_logs(timestamp)
     """)
+
+    connection.commit()
+
+    connection.close()
+
+
+def insert_log(bot_id, event_type, source_ip="127.0.0.1", payload_size=0, beacon_interval=None, metadata=None, db_path=None):
+    """
+    This function is called everytime a bot talks to the C2 server.
+    """
+
+    connection = get_connection(db_path)
+
+    connection.execute(
+        """
+        INSERT INTO traffic_logs(
+        timestamp, bot_id, event_type, source_ip, payload_size, beacon_interval, metadata
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+        """,
+        (
+            datetime.now(datetime.timezone.utc).isoformat(),
+            bot_id,
+            event_type,
+            source_ip,
+            payload_size,
+            beacon_interval,
+            json.dumps(metadata or {}),
+        ),
+    )
 
     connection.commit()
 
