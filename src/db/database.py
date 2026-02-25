@@ -91,12 +91,7 @@ def insert_log(bot_id, event_type, source_ip="127.0.0.1", payload_size=0, beacon
 def get_logs_by_bot(bot_id, db_path = None):
     connection = get_connection(db_path)
 
-    rows = connection.execute(
-        """
-        SELECT * FROM traffic_logs WHERE bot_id = ? ORDER BY timestamp
-        """,
-        (bot_id,),
-    ).fetchall()
+    rows = connection.execute("SELECT * FROM traffic_logs WHERE bot_id = ? ORDER BY timestamp", (bot_id,),).fetchall()
 
     connection.close
 
@@ -106,3 +101,17 @@ def get_logs_by_bot(bot_id, db_path = None):
     
     return lst
 
+#get all logs
+def get_all_logs(limit = 1000, db_path = None):
+    connection = get_connection(db_path)
+
+    rows = connection.execute("SELECT * FROM traffic_logs ORDER BY timestamp DESC LIMIT ?", (limit,),).fetchall()
+
+    connection.close()
+
+    lst = []
+
+    for row in rows:
+        lst.append(dict(row))
+    
+    return lst
