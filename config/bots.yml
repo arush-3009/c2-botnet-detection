@@ -1,0 +1,36 @@
+# Bot Configuration
+
+server_url: "http://127.0.0.1:8000"
+
+bots:
+  # Malicious bots having regular beacon intervals
+  - bot_id: "mal_001"
+    type: "malicious"
+    beacon_interval: 60
+    jitter: 5
+    payload_size: 128
+
+  - bot_id: "mal_002"
+    type: "malicious"
+    beacon_interval: 45
+    jitter: 3
+    payload_size: 128
+
+  - bot_id: "mal_003"
+    type: "malicious"
+    beacon_interval: 60
+    jitter: 4
+    payload_size: 64
+
+  # Benign bots having irregular patterns
+  - bot_id: "benign_001"
+    type: "benign"
+    beacon_interval: 120
+    jitter: 90
+    payload_size: 512
+
+  - bot_id: "benign_002"
+    type: "benign"
+    beacon_interval: 200
+    jitter: 150
+    payload_size: 1024
