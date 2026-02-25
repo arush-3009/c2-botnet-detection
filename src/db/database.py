@@ -7,7 +7,7 @@ or reads from it.
 import sqlite3
 import json
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
 
 #Database file
 DB_PATH = Path(__file__).parent.parent.parent / "c2_traffic.db"
@@ -72,7 +72,7 @@ def insert_log(bot_id, event_type, source_ip="127.0.0.1", payload_size=0, beacon
         VALUES (?, ?, ?, ?, ?, ?, ?)
         """,
         (
-            datetime.now(datetime.timezone.utc).isoformat(),
+            datetime.now(tz=timezone.utc).isoformat(),
             bot_id,
             event_type,
             source_ip,
@@ -93,7 +93,7 @@ def get_logs_by_bot(bot_id, db_path = None):
 
     rows = connection.execute("SELECT * FROM traffic_logs WHERE bot_id = ? ORDER BY timestamp", (bot_id,),).fetchall()
 
-    connection.close
+    connection.close()
 
     lst = []
     for row in rows:
