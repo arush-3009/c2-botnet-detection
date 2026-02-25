@@ -78,3 +78,15 @@ def post_result(request: CommandResultRequest):
         metadata={"command_id": request.command_id, "output": request.output},
     )
     return {"status": "received", "command_id": request.command_id}
+
+@app.get("/api/logs")
+def api_get_logs(limit: int = 1000):
+    return get_all_logs(limit=limit)
+
+@app.get("/api/logs/{bot_id}")
+def api_get_bot_logs(bot_id: str):
+    return get_logs_by_bot(bot_id)
+
+@app.get("/api/bots")
+def api_get_bots():
+    return get_unique_bots()
