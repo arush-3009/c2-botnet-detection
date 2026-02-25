@@ -14,3 +14,8 @@ class CheckinRequest(BaseModel):
     payload_size: int = 0
     metadata: dict = {}
 
+class CommandResultRequest(BaseModel):
+    bot_id: str
+    command_id: str
+    output: str
+    source_ip: str = "127.0.0.1"
