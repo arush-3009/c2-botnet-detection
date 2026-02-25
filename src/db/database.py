@@ -126,5 +126,28 @@ def get_unique_bots(db_path=None):
     lst = []
     for row in rows:
         lst.append(row["bot_id"])
-        
+
+    return lst
+
+#get beacon intervals for a specific bot
+def get_bot_checkin_intervals(bot_id, db_path=None):
+
+    connection = get_connection(db_path)
+
+    rows = connection.execute(
+        """
+        SELECT beacon_interval FROM traffic_logs 
+        WHERE bot_id = ? AND beacon_interval IS NOT NULL
+        ORDER BY timestamp
+        """,
+        (bot_id,),
+    ).fetchall()
+
+    connection.close()
+
+    lst = []
+
+    for row in rows:
+        lst.append(row["beacon_interval"])
+    
     return lst
