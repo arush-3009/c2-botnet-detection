@@ -90,3 +90,13 @@ def api_get_bot_logs(bot_id: str):
 @app.get("/api/bots")
 def api_get_bots():
     return get_unique_bots()
+
+@app.post("/api/queue_command/{bot_id}")
+def queue_command(bot_id, command):
+    
+    if bot_id not in command_queue:
+        command_queue[bot_id] = []
+    
+    command_queue[bot_id].append(command)
+    
+    return {"status": "queued", "bot_id": bot_id, "queue_length": len(command_queue[bot_id])}
