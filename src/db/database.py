@@ -27,3 +27,31 @@ def get_connection(db_path = None):
 
     return connection
 
+def init_db(db_path = None):
+
+    connection = get_connection(db_path)
+
+    connection.execute("""
+    CREATE TABLE IF NOT EXISTS traffic_logs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            timestamp TEXT NOT NULL,
+            bot_id TEXT NOT NULL,
+            event_type TEXT NOT NULL,
+            source_ip TEXT DEFAULT '127.0.0.1',
+            payload_size INTEGER DEFAULT 0,
+            beacon_interval REAL DEFAULT NULL,
+            metadata TEXT DEFAULT '{}'
+        )
+    """)
+
+    connection.execute("""
+        CREATE INDEX IF NOT EXISTS idx_bot_id ON traffic_logs(bot_id)
+    """)
+    
+    connection.execute("""
+        CREATE INDEX IF NOT EXISTS idx_timestamp ON traffic_logs(timestamp)
+    """)
+
+    connection.commit()
+
+    connection.close()
