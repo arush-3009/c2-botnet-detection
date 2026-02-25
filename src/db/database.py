@@ -85,3 +85,24 @@ def insert_log(bot_id, event_type, source_ip="127.0.0.1", payload_size=0, beacon
     connection.commit()
 
     connection.close()
+
+
+#get all logs for specific bot
+def get_logs_by_bot(bot_id, db_path = None):
+    connection = get_connection(db_path)
+
+    rows = connection.execute(
+        """
+        SELECT * FROM traffic_logs WHERE bot_id = ? ORDER BY timestamp
+        """,
+        (bot_id,),
+    ).fetchall()
+
+    connection.close
+
+    lst = []
+    for row in rows:
+        lst.append(dict(row))
+    
+    return lst
+
