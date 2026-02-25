@@ -11,3 +11,19 @@ from datetime import datetime
 
 #Database file
 DB_PATH = Path(__file__).parent.parent.parent / "c2_traffic.db"
+
+
+def get_connection(db_path = None):
+    """
+    Establish connection to database.
+    """
+    if db_path is not None:
+        path = db_path
+    else:
+        path = str(DB_PATH)
+    
+    connection = sqlite3.connect(path)
+    connection.row_factory = sqlite3.Row
+
+    return connection
+
