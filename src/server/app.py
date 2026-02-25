@@ -24,3 +24,28 @@ class CommandResultRequest(BaseModel):
 #tracking bot state - last check in time and what commands are queued for it
 last_checkin: dict[str, datetime] = {}
 command_queue: dict[str, list[dict]] = {}
+
+@app.post("/checkin")
+def checkin(request: CheckinRequest):
+
+    now = datetime.now(tz=timezone.utc)
+
+    #calculate beacon interval
+    interval = None
+    if request.bot_id in last_checkin:
+        diff = now - last_checkin[request.bot_id]
+        interval = diff.total_seconds()
+    
+    last_checkin[request.bot_id] = now
+
+    #log
+    insert_log(
+        bot_id = request.bot_id,
+        event_type = "checkin",
+        source_ip = request.source_ip,
+        payload_size=request.payload_size,
+        beacon_interval = interval,
+        metadata = request.metadata 
+    )
+
+    return {"status": "ok", "bot_id": request.bot_id, "interval_logged": interval}
