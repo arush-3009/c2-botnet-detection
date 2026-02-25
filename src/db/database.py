@@ -115,3 +115,16 @@ def get_all_logs(limit = 1000, db_path = None):
         lst.append(dict(row))
     
     return lst
+
+def get_unique_bots(db_path=None):
+
+    connection  = get_connection(db_path)
+
+    rows = connection.execute("SELECT DISTINCT bot_id FROM traffic_logs").fetchall()
+
+    connection.close()
+    lst = []
+    for row in rows:
+        lst.append(row["bot_id"])
+        
+    return lst
