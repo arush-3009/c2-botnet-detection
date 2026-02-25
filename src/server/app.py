@@ -19,3 +19,8 @@ class CommandResultRequest(BaseModel):
     command_id: str
     output: str
     source_ip: str = "127.0.0.1"
+
+
+#tracking bot state - last check in time and what commands are queued for it
+last_checkin: dict[str, datetime] = {}
+command_queue: dict[str, list[dict]] = {}
