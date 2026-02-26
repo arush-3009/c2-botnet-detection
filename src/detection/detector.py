@@ -1,6 +1,7 @@
 import yaml
 import math
 from pathlib import Path
+from datetime import datetime
 from src.db.database import get_unique_bots, get_bot_checkin_intervals, get_logs_by_bot
 
 
@@ -93,9 +94,57 @@ def analyze_payload(logs, config):
 
     if cv < threshold:
         result["suspicious"] = True
-        
+
         result["score"] = min(1.0, 1.0 - (cv / threshold))
     else:
         result["score"] = max(0.0, 1.0 - (cv / threshold))
+
+    return result
+
+
+def analyze_frequency(logs, config):
+    result = {
+        "suspicious": False,
+        "score": 0.0,
+        "checkins_per_hour": None,
+    }
+
+    checkins = []
+
+    for log in logs:
+        if log["event_type"] == "checkin":
+            checkins.append(log)
+
+
+    if len(checkins) < 2:
+        return result
+
+
+    first = checkins[0]["timestamp"]
+    last = checkins[-1]["timestamp"]
+
+    # Parse timestamps and get hours difference
+    
+    t_first = datetime.fromisoformat(first)
+    t_last = datetime.fromisoformat(last)
+    hours = (t_last - t_first).total_seconds() / 3600
+
+    if hours == 0:
+
+        return result
+
+    rate = len(checkins) / hours
+
+    result["checkins_per_hour"] = round(rate, 2)
+
+    max_rate = config["frequency"]["max_checkins_per_hour"]
+
+    if rate > max_rate:
+        
+        result["suspicious"] = True
+
+        result["score"] = min(1.0, rate / max_rate)
+    else:
+        result["score"] = rate / max_rate
 
     return result
