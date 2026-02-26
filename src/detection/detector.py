@@ -140,7 +140,7 @@ def analyze_frequency(logs, config):
     max_rate = config["frequency"]["max_checkins_per_hour"]
 
     if rate > max_rate:
-        
+
         result["suspicious"] = True
 
         result["score"] = min(1.0, rate / max_rate)
@@ -148,3 +148,83 @@ def analyze_frequency(logs, config):
         result["score"] = rate / max_rate
 
     return result
+
+
+
+def analyze_bot(bot_id, config, db_path=None):
+
+    intervals = get_bot_checkin_intervals(bot_id, db_path=db_path)
+
+    logs = get_logs_by_bot(bot_id, db_path=db_path)
+
+    #get different results
+    beacon_result = analyze_beacon(intervals, config)
+    payload_result = analyze_payload(logs, config)
+    frequency_result = analyze_frequency(logs, config)
+
+    # weighted combined score
+    weights = config["scoring"]
+
+    combined_score = (
+        beacon_result["score"] * weights["beacon_weight"] + payload_result["score"] * weights["payload_weight"] + frequency_result["score"] * weights["frequency_weight"]
+    )
+
+    return {
+        "bot_id": bot_id,
+        "suspicious": combined_score >= weights["alert_threshold"],
+        "combined_score": round(combined_score, 4),
+        "beacon_analysis": beacon_result,
+        "payload_analysis": payload_result,
+        "frequency_analysis": frequency_result,
+    }
+
+
+def run_detection(config_path=None, db_path=None):
+
+    config = load_detection_config(config_path)
+
+    bots = get_unique_bots(db_path=db_path)
+
+    print(f"\n{'='*60}")
+    print(f"C2 BEACON DETECTION REPORT")
+    print(f"Analyzing {len(bots)} bots...")
+    print(f"{'='*60}\n")
+
+    results = []
+
+    for bot_id in bots:
+
+        result = analyze_bot(bot_id, config, db_path=db_path)
+
+        results.append(result)
+
+        if result["suspicious"]:
+            status = "SUSPICIOUS"
+        else:
+            status = "CLEAN"
+
+
+        print(f"{status}    {bot_id}")
+        print(f"Combined Score: {result['combined_score']}")
+        print(f"Beacon CV: {result['beacon_analysis']['cv']} (mean interval: {result['beacon_analysis']['mean_interval']}s)")
+        print(f"Payload CV: {result['payload_analysis']['cv']}")
+        print(f"Frequency: {result['frequency_analysis']['checkins_per_hour']} checkins/hr")
+        print()
+
+    suspicious = []
+    clean = []
+    for r in results:
+        if r["suspicious"]:
+            suspicious.append(r)
+        else:
+            clean.append(r)
+
+    print(f"{'='*60}")
+    print(f"SUMMARY: {len(suspicious)} suspicious, {len(clean)} clean")
+    print(f"{'='*60}\n")
+
+    return results
+
+
+if __name__ == "__main__":
+    run_detection()
