@@ -2,3 +2,5 @@ venv
 __pycache__
 c2_traffic.db
 .pytest_cache
+.DS_Store
+c2-detection-server-instance-key-pair-rsa.pem
