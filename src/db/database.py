@@ -8,9 +8,11 @@ import sqlite3
 import json
 from pathlib import Path
 from datetime import datetime, timezone
+import os
 
 #Database file
-DB_PATH = Path(__file__).parent.parent.parent / "c2_traffic.db"
+DB_PATH = Path(os.environ.get("DB_PATH", str(Path(__file__).parent.parent.parent / "c2_traffic.db")))
+
 
 
 def get_connection(db_path = None):
