@@ -11,7 +11,14 @@ def load_config(config_path=None):
         path = str(Path(__file__).parent.parent.parent / "config" / "bots.yaml")
     
     with open(path, "r") as f:
-        return yaml.safe_load(f)
+        config = yaml.safe_load(f)
+    
+    import os
+    env_url = os.environ.get("SERVER_URL")
+    if env_url:
+        config["server_url"] = env_url
+    
+    return config
     
 async def run_bot(bot_config, server_url):
     bot_id = bot_config["bot_id"]
