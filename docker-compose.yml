@@ -1,0 +1,44 @@
+version: "3.8"
+
+services:
+  c2-server:
+    build: .
+    container_name: c2-server
+    ports:
+      - "8000:8000"
+    volumes:
+      - db-data:/app/data
+    environment:
+      - DB_PATH=/app/data/c2_traffic.db
+    command: uvicorn src.server.app:app --host 0.0.0.0 --port 8000
+    healthcheck:
+      test: ["CMD", "python", "-c", "import httpx; httpx.get('http://localhost:8000/api/bots')"]
+      interval: 10s
+      retries: 3
+
+  bot-simulator:
+    build: .
+    container_name: bot-simulator
+    depends_on:
+      c2-server:
+        condition: service_healthy
+    environment:
+      - SERVER_URL=http://c2-server:8000
+    command: python -m src.bots.bot
+
+  detector:
+    build: .
+    container_name: detector
+    depends_on:
+      c2-server:
+        condition: service_healthy
+    volumes:
+      - db-data:/app/data
+    environment:
+      - DB_PATH=/app/data/c2_traffic.db
+    command: python -m src.detection.detector
+    profiles:
+      - detect
+
+volumes:
+  db-data:
