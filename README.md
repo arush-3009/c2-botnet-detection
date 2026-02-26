@@ -4,10 +4,7 @@ A full-stack security research tool that simulates Command-and-Control (C2) botn
 
 ## Architecture
 ```
-Bot Simulator ──→ C2 Server (FastAPI) ──→ SQLite Database
-                                              │
-                  Detection Pipeline ←────────┘
-                  (Beacon Analysis)
+Bot Simulator ──→ C2 Server (FastAPI) ──→ SQLite Database ──→ Detection Pipeline (Beacon Analysis)              
 ```
 
 ## Components
