@@ -67,5 +67,5 @@ Python, FastAPI, SQLite, Docker, Docker Compose, GitHub Actions CI, AWS EC2, pyt
 
 ## Configuration
 
-- `config/bots.yaml` — Bot parameters (intervals, jitter, types)
-- `config/detection.yaml` — Detection thresholds and scoring weights
+- `config/bots.yaml` -> Bot parameters (intervals, jitter, types)
+- `config/detection.yaml` —> Detection thresholds and scoring weights
