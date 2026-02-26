@@ -1,0 +1,22 @@
+# Detection Pipeline Configuration
+
+# beacon regularity detection
+# coefficient_of_variation = std_dev / mean
+beacon:
+  cv_threshold: 0.15
+  min_samples: 3
+
+# payload consistency detection
+payload:
+  cv_threshold: 0.10
+
+# frequency detection
+frequency:
+  max_checkins_per_hour: 100
+
+# Overall scoring
+scoring:
+  beacon_weight: 0.5
+  payload_weight: 0.3
+  frequency_weight: 0.2
+  alert_threshold: 0.6
