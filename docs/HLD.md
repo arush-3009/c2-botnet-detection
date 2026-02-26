@@ -2,7 +2,7 @@
 
 ## 1. System Overview
 
-This system simulates C2 botnet communication and provides automated detection of malicious beacon patterns. It is designed for security research and as a training environment for adversarial ML agents.
+This system simulates C2 botnet communication and provides automated detection of malicious beacon patterns.
 
 ## 2. Components
 
@@ -10,10 +10,10 @@ This system simulates C2 botnet communication and provides automated detection o
 - **Technology**: FastAPI + Uvicorn
 - **Responsibilities**: Accept bot checkins, issue commands, log all traffic
 - **Endpoints**:
-  - POST /checkin — Bot heartbeat with beacon interval tracking
-  - GET /command/{bot_id} — Command distribution
-  - POST /result — Command output collection
-  - GET /api/logs, /api/bots — Detection pipeline data access
+  - POST /checkin -> Bot heartbeat with beacon interval tracking
+  - GET /command/{bot_id} -> Command distribution
+  - POST /result -> Command output collection
+  - GET /api/logs, /api/bots -> Detection pipeline data access
 - **State**: In-memory tracking of last checkin times and command queues
 
 ### 2.2 Bot Simulator (src/bots/bot.py)
@@ -53,10 +53,3 @@ This system simulates C2 botnet communication and provides automated detection o
 ## 5. Security Note
 
 This tool is for educational and research purposes only. The C2 simulation runs in a controlled environment and does not interact with any real systems.
-
-## 6. Future Work
-
-- Wrap simulation as OpenAI Gymnasium environment for RL training
-- Multi-agent RL swarm for autonomous botnet disruption
-- DNS tunneling and domain generation algorithm simulation
-- Real-time detection dashboard
