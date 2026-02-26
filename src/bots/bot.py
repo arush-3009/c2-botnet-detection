@@ -2,6 +2,7 @@ import asyncio
 import random
 import yaml
 import httpx
+import os
 from pathlib import Path
 
 def load_config(config_path=None):
@@ -13,7 +14,7 @@ def load_config(config_path=None):
     with open(path, "r") as f:
         config = yaml.safe_load(f)
     
-    import os
+    
     env_url = os.environ.get("SERVER_URL")
     if env_url:
         config["server_url"] = env_url
