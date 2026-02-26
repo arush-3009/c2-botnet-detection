@@ -1,6 +1,6 @@
 # Bot Configuration
 
-server_url: "http://127.0.0.1:8000"
+server_url: "http://18.220.56.220:8000"
 
 bots:
   # Malicious bots having regular beacon intervals
