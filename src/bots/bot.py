@@ -66,3 +66,25 @@ async def run_bot(bot_config, server_url):
                     )
             except Exception as e:
                 print(f"[{bot_id}] Command fetch FAILED: {e}")
+
+async def main(config_path=None):
+    config = load_config(config_path)
+    server_url = config["server_url"]
+
+    # create task for each bot
+    tasks = []
+    for bot_config in config["bots"]:
+        task = asyncio.create_task(run_bot(bot_config, server_url))
+        tasks.append(task)
+
+    print(f"Launched {len(tasks)} bots. Press Ctrl+C to stop.\n")
+
+
+    await asyncio.gather(*tasks)
+
+
+if __name__ == "__main__":
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        print("\nBots stopped.")
