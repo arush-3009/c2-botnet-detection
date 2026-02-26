@@ -50,11 +50,51 @@ def analyze_beacon(intervals, config):
     # invert into 0-1 score where 1 = maximum suspicion
 
     threshold = config["beacon"]["cv_threshold"]
-    
+
     if cv < threshold:
         result["suspicious"] = True
         result["score"] = min(1.0, 1.0 - (cv / threshold))
 
+    else:
+        result["score"] = max(0.0, 1.0 - (cv / threshold))
+
+    return result
+
+def analyze_payload(logs, config):
+    result = {
+        "suspicious": False,
+        "score": 0.0,
+        "cv": None,
+    }
+
+    # payload sizes from checkin events only
+    sizes = []
+    for log in logs:
+        if log["event_type"] == "checkin":
+            sizes.append(log["payload_size"])
+
+    if len(sizes) < 3:
+
+        return result
+
+    mean = sum(sizes) / len(sizes)
+
+    if mean == 0:
+        return result
+
+    variance = sum((x - mean) ** 2 for x in sizes) / len(sizes)
+    std_dev = math.sqrt(variance)
+
+    cv = std_dev / mean
+
+    result["cv"] = round(cv, 4)
+
+    threshold = config["payload"]["cv_threshold"]
+
+    if cv < threshold:
+        result["suspicious"] = True
+        
+        result["score"] = min(1.0, 1.0 - (cv / threshold))
     else:
         result["score"] = max(0.0, 1.0 - (cv / threshold))
 
