@@ -4,3 +4,6 @@ c2_traffic.db
 .pytest_cache
 .DS_Store
 c2-detection-server-instance-key-pair-rsa.pem
+
+c2-botnet-detection-video-2.mp4
+c2-botnet-detection-video-1.mp4
